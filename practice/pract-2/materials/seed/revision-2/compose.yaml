@@ -1,0 +1,7 @@
+services:
+  release-agent:
+    build: .
+    image: practice-2-release:student
+    privileged: true
+    volumes:
+      - .:/app

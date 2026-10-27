@@ -1,0 +1,11 @@
+services:
+  notebook:
+    build: .
+    container_name: traceshop-notebook
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_CONFIG_DIR: /work/.jupyter
+    volumes:
+      - .:/work
+    restart: unless-stopped

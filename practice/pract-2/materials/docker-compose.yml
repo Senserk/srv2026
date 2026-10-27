@@ -1,0 +1,19 @@
+name: practice-2-sdlc
+
+services:
+  lab:
+    build:
+      context: .
+      dockerfile: lab/Dockerfile
+    image: practice-2-lab:1.0
+    container_name: practice-2-lab
+    stdin_open: true
+    tty: true
+    environment:
+      GRYPE_DB_CACHE_DIR: /work/.cache/grype
+    volumes:
+      - practice-data:/work
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  practice-data:

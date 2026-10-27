@@ -1,0 +1,16 @@
+# Учебный стенд: одно уязвимое веб-приложение «Магазин».
+# Запуск:   docker compose up -d --build
+# Остановка: docker compose down
+#
+# Журнал событий приложения пишется в каталог ./logs на хосте (виртуальной машине),
+# поэтому правила обнаружения применяются к файлу logs/events.jsonl.
+
+services:
+  shop-app:
+    build: .
+    container_name: shop-app
+    ports:
+      - "8080:8080"          # приложение доступно на http://localhost:8080
+    volumes:
+      - ./logs:/app/logs     # журнал событий виден на хосте: app/logs/events.jsonl
+    restart: unless-stopped

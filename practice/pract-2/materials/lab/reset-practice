@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+quiet=false
+if [[ "${1:-}" == "--quiet" ]]; then
+  quiet=true
+fi
+
+if [[ ! -d /work || "$(realpath /work)" != "/work" ]]; then
+  echo "Небезопасный путь рабочего каталога" >&2
+  exit 1
+fi
+
+find /work -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+mkdir -p /work/repository /work/reports /work/.cache/grype
+
+cp -a /opt/practice/seed/revision-1/. /work/repository/
+git -C /work/repository init -q
+git -C /work/repository config user.name "Release Team"
+git -C /work/repository config user.email "user@example.local"
+git -C /work/repository add .
+git -C /work/repository commit -qm "bootstrap release candidate"
+
+cp -a /opt/practice/seed/revision-2/. /work/repository/
+rm -f /work/repository/config/legacy.env
+git -C /work/repository add -A
+git -C /work/repository commit -qm "prepare release 2.0"
+
+cp /opt/practice/student-playbook.sh /work/playbook.sh
+cp /opt/practice/report-template.md /work/report.md
+chmod +x /work/playbook.sh
+
+if [[ "$quiet" == false ]]; then
+  echo "Практика возвращена в исходное состояние."
+  git -C /work/repository log --oneline --decorate
+fi

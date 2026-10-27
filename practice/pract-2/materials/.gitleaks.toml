@@ -1,0 +1,7 @@
+title = "Practice 2 deterministic secret rules"
+
+[[rules]]
+id = "training-api-token"
+description = "Учебный API-токен не должен храниться в Git"
+regex = '''TRAINING_TOKEN_[A-Z0-9]{16}'''
+tags = ["secret", "training"]

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивный учебный полигон по обнаружению атак">
+  <title>TraceShop — учебный полигон</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="TraceShop — в начало">
+      <span class="brand-mark">T</span>
+      <span>TraceShop <small>LAB</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="live"><i></i> журнал активен</span>
+      <button class="button ghost" id="reset-lab" type="button">Сбросить стенд</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Практика 3 · Red team → Blue team</p>
+        <h1>Взломайте учебный магазин.<br><span>Затем поймайте себя по журналу.</span></h1>
+        <p class="lede">Все действия настоящие: запросы уходят в приложение, а события появляются справа в реальном времени. Выполняйте миссии строго слева направо — следующая откроется после предыдущей.</p>
+      </div>
+      <aside class="briefing">
+        <div class="briefing-label">Перехваченная заметка</div>
+        <p>Покупатель <code>anna</code> любит цветы. В конце пароля — одна цифра.</p>
+        <p>Номера заказов последовательны и начинаются с <code>1001</code>.</p>
+        <div class="source-row"><span>Адрес исследователя</span><input id="source-ip" value="203.0.113.77" aria-label="Адрес источника"></div>
+      </aside>
+    </section>
+
+    <section class="mission-strip" aria-label="Прогресс миссий">
+      <article data-mission="bruteforce"><b>01</b><span>Получить доступ как anna</span><i>0/5 неудач, затем успех</i></article>
+      <article data-mission="spraying"><b>02</b><span>Создать распыление</span><i>заблокировано</i></article>
+      <article data-mission="idor"><b>03</b><span>Найти чужие заказы</span><i>заблокировано</i></article>
+      <article data-mission="mfa"><b>04</b><span>Отключить MFA без заявки</span><i>заблокировано</i></article>
+    </section>
+
+    <section class="workspace">
+      <div class="attack-panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Атакующая сторона</p><h2>Рабочая консоль</h2></div>
+          <span class="mode red">ручной режим</span>
+        </div>
+
+        <div class="tool-card active" data-tool="bruteforce">
+          <div class="tool-title"><span>01</span><div><h3>Подбор пароля</h3><p>Проверяйте гипотезы по одной и следите за событиями.</p></div></div>
+          <form id="login-form">
+            <label>Учётная запись<input name="username" value="anna" autocomplete="off"></label>
+            <label>Пароль<input name="password" placeholder="Введите гипотезу" autocomplete="off"></label>
+            <div class="wordlist" aria-label="Словарь паролей">
+              <button type="button" data-password="123456">123456</button>
+              <button type="button" data-password="qwerty">qwerty</button>
+              <button type="button" data-password="anna2026">anna2026</button>
+              <button type="button" data-password="sunflower">sunflower</button>
+              <button type="button" data-password="letmein">letmein</button>
+            </div>
+            <button class="button primary" type="submit">Попробовать войти</button>
+          </form>
+          <div class="response" id="login-response" aria-live="polite">Результат появится здесь</div>
+        </div>
+
+        <div class="tool-card locked" data-tool="spraying">
+          <div class="tool-title"><span>02</span><div><h3>Распыление пароля</h3><p>Один пароль, разные логины, один адрес.</p></div></div>
+          <form id="spray-form">
+            <label>Один пароль<input name="password" value="123456" autocomplete="off"></label>
+            <label>Следующая учётная запись<input name="username" value="clara" list="spray-users" autocomplete="off"></label>
+            <label>Адрес источника<input name="source" value="198.51.100.23" autocomplete="off"></label>
+            <datalist id="spray-users"><option>clara</option><option>dmitry</option><option>elena</option><option>frank</option><option>galina</option><option>igor</option><option>julia</option><option>kirill</option></datalist>
+            <button class="button primary" type="submit">Отправить попытку</button>
+          </form>
+          <div class="response" id="spray-response" aria-live="polite">Нужно 8 разных логинов</div>
+        </div>
+
+        <div class="tool-card two-column-tools">
+          <div class="tool-section locked" data-tool="idor">
+            <div class="tool-title compact"><span>03</span><div><h3>Перебор заказов</h3><p>Проверяйте соседние ID.</p></div></div>
+            <form id="order-form">
+              <label>Действовать как<input name="user" value="anna"></label>
+              <label>Номер заказа<input name="order" type="number" value="1001"></label>
+              <button class="button primary" type="submit">Открыть заказ</button>
+            </form>
+            <div class="response" id="order-response" aria-live="polite">Начните с 1001</div>
+          </div>
+          <div class="tool-section locked" data-tool="mfa">
+            <div class="tool-title compact"><span>04</span><div><h3>Отключение MFA</h3><p>Оставьте заявку пустой.</p></div></div>
+            <form id="mfa-form">
+              <label>Действовать как<input name="user" value="anna"></label>
+              <label>ID заявки (необязательно)<input name="ticket" placeholder="например, SEC-42"></label>
+              <button class="button danger" type="submit">Отключить MFA</button>
+            </form>
+            <div class="response" id="mfa-response" aria-live="polite">Повторный пароль не требуется</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="telemetry-panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Защитная сторона</p><h2>Живая телеметрия</h2></div>
+          <span class="mode">обновление 2 сек</span>
+        </div>
+        <div class="counters">
+          <div><strong id="total-count">0</strong><span>событий</span></div>
+          <div><strong id="failure-count">0</strong><span>ошибок входа</span></div>
+          <div><strong id="denial-count">0</strong><span>отказов доступа</span></div>
+        </div>
+        <div class="signal-box" id="signal-box">
+          <span>Наблюдение</span>
+          <p>Начните действовать слева. Здесь появятся признаки атаки, но окончательный вердикт дадут правила Sigma.</p>
+        </div>
+        <div class="event-heading"><h3>Последние события</h3><button id="refresh-events" type="button">обновить</button></div>
+        <div class="event-feed" id="event-feed" aria-live="polite"><p class="empty">Журнал пока пуст</p></div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
