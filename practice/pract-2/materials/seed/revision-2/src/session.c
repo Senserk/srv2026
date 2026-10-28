@@ -27,3 +27,9 @@ int handle_session(int reject_request) {
     free(session);
     return reject_request ? 1 : 0;
 }
+
+static int quota[4] = {10, 20, 30, 40};
+
+int session_quota(int slot) {
+    return quota[slot];
+}

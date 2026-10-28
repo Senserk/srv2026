@@ -16,6 +16,7 @@ def fail(message: str) -> None:
 
 required = [
     REPORTS / "sast.txt",
+    REPORTS / "dast-asan.txt",
     REPORTS / "gitleaks.json",
     REPORTS / "sbom.cdx.json",
     REPORTS / "grype.json",
@@ -30,6 +31,10 @@ if "error:" in sast:
     fail("SAST: исходный код не компилируется")
 if "Attempt to free released memory" in sast:
     fail("SAST по-прежнему обнаруживает двойное освобождение")
+
+dast = (REPORTS / "dast-asan.txt").read_text(errors="replace")
+if "AddressSanitizer" in dast or "LeakSanitizer" in dast:
+    fail("DAST: AddressSanitizer обнаружил ошибку при выполнении")
 
 gitleaks = json.loads((REPORTS / "gitleaks.json").read_text())
 if gitleaks:

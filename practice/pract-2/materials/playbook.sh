@@ -16,42 +16,47 @@ scan_sast() {
   :
 }
 
+scan_dast() {
+  # TODO 3: Build with AddressSanitizer and run the program on several inputs.
+  :
+}
+
 scan_secrets() {
-  # TODO 3: Scan the working tree and the complete Git history.
+  # TODO 4: Scan the working tree and the complete Git history.
   :
 }
 
 build_release() {
-  # TODO 4: Build the practice-2-release:student image.
+  # TODO 5: Build the practice-2-release:student image.
   :
 }
 
 make_sbom() {
-  # TODO 5: Create /work/reports/sbom.cdx.json.
+  # TODO 6: Create /work/reports/sbom.cdx.json.
   :
 }
 
 scan_dependencies() {
-  # TODO 6: Scan the SBOM with Grype.
+  # TODO 7: Scan the SBOM with Grype.
   :
 }
 
 scan_container() {
-  # TODO 7: Scan Dockerfile and compose.yaml with Trivy.
+  # TODO 8: Scan Dockerfile and compose.yaml with Trivy.
   :
 }
 
 verify_release() {
-  # TODO 8: Repeat all checks and run the automated gate.
+  # TODO 9: Repeat all checks and run the automated gate.
   :
 }
 
 case "${1:-}" in
-  baseline|scan_sast|scan_secrets|build_release|make_sbom|scan_dependencies|scan_container|verify_release)
+  baseline|scan_sast|scan_dast|scan_secrets|build_release|make_sbom|scan_dependencies|scan_container|verify_release)
     "$1"
     ;;
   *)
-    echo "Stages: baseline scan_sast scan_secrets build_release make_sbom scan_dependencies scan_container verify_release"
+    echo "Stages: baseline scan_sast scan_dast scan_secrets build_release make_sbom scan_dependencies scan_container verify_release"
     exit 2
     ;;
 esac

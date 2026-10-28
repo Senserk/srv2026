@@ -6,10 +6,11 @@ FROM aquasec/trivy:0.58.1 AS trivy
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-18
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       bash build-essential ca-certificates clang clang-tools cmake curl \
+       bash build-essential ca-certificates clang clang-tools libclang-rt-18-dev llvm-18 cmake curl \
        docker.io git jq less nano python3 tree \
     && rm -rf /var/lib/apt/lists/*
 
@@ -23,10 +24,11 @@ COPY .gitleaks.toml /opt/practice/gitleaks.toml
 COPY playbook.sh /opt/practice/student-playbook.sh
 COPY report-template.md /opt/practice/report-template.md
 COPY verify/verify.py /opt/practice/verify.py
+COPY tools/sarif_triage.py /usr/local/bin/sarif-triage
 COPY lab/reset-practice /usr/local/bin/practice-reset
 COPY lab/entrypoint.sh /usr/local/bin/practice-entrypoint
 
-RUN chmod +x /usr/local/bin/practice-reset /usr/local/bin/practice-entrypoint \
+RUN chmod +x /usr/local/bin/sarif-triage /usr/local/bin/practice-reset /usr/local/bin/practice-entrypoint \
     /opt/practice/student-playbook.sh \
     && mkdir -p /work
 

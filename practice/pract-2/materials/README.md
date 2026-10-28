@@ -30,3 +30,25 @@
 контейнере. Docker socket подключён только для сборки и анализа учебного
 release-образа; такой доступ допустим для локального стенда, но не должен
 выдаваться обычному production-контейнеру.
+
+## Разметка результатов SAST через OpenRouter
+
+Скрипт `sarif-triage` (в образе, исходник `tools/sarif_triage.py`) отправляет
+каждую находку из `sast.sarif` с трассой и фрагментом кода языковой модели через
+OpenRouter и записывает вердикт обратно в SARIF: `properties.llmTriage`
+(`true_positive`, `false_positive` или `needs_review`, уверенность, объяснение,
+исправление). Для `false_positive` добавляется `suppressions[]` со статусом
+`underReview`. Исходные поля отчёта не меняются.
+
+Ключ передаётся только переменной окружения, в файлы и образ он не попадает:
+
+```bash
+sarif-triage --dry-run /work/reports/sast.sarif --source-root /work/repository
+export OPENROUTER_API_KEY=...            # ваш ключ
+sarif-triage /work/reports/sast.sarif --source-root /work/repository
+# результат: /work/reports/sast.triaged.sarif
+```
+
+Параметры: `--model` (по умолчанию `anthropic/claude-3.5-haiku`, также
+`OPENROUTER_MODEL`), `-o` (выходной файл), `--timeout`. Режим `--dry-run` не
+требует ключа и сети: он печатает запросы, которые будут отправлены.
